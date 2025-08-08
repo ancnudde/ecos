@@ -1,19 +1,47 @@
+:root {
+    --font-family-base: Arial, sans-serif;
+    --padding-base: 1rem;
+    --margin-base: 2rem;
+
+    --color-bg-main: #f9f9f9;
+    --color-bg-section: white;
+    --color-bg-super-section: mintcream;
+    --color-bg-case-name: #ccc;
+    --color-bg-h2: #eee;
+
+    --color-border: #ccc;
+    --color-border-alt: grey;
+
+    --border-radius-base: 10px;
+    --border-radius-small: 5px;
+    --border-radius-input: 8px;
+
+    --font-size-h1: 1.6rem;
+    --font-size-h2: 2rem;
+    --font-size-item: 1.2rem;
+    --font-size-total: 1.5rem;
+    --font-size-small: 0.9em;
+    --font-size-normal: 1em;
+}
+
+/* Global Styles */
 body {
-    font-family: Arial, sans-serif;
+    font-family: var(--font-family-base);
     padding: 2rem;
-    background: #f9f9f9;
+    background: var(--color-bg-main);
 }
 
 h1 {
     margin-bottom: 1rem;
 }
 
+/* Super Section */
 .super-section {
-    margin-bottom: 2rem;
-    padding: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    background-color: mintcream;
+    margin-bottom: var(--margin-base);
+    padding: var(--padding-base);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-base);
+    background-color: var(--color-bg-super-section);
 }
 
 .super-section-title {
@@ -21,29 +49,31 @@ h1 {
     justify-content: space-between;
     align-items: center;
     padding: 10px;
-    font-size: 1.6rem;
+    font-size: var(--font-size-h1);
 }
 
 .super-section-total {
     width: 60px;
     height: 40px;
-    background-color: #f9f9f9;
+    background-color: var(--color-bg-main);
     display: flex;
     justify-content: center;
     align-items: center;
-    border: 1px solid #ccc;
+    border: 1px solid var(--color-border);
 }
 
+/* Student Name */
 .student-name {
     width: 200px;
     height: 30px;
     margin: 20px;
     padding: 8px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 1em;
+    border-radius: var(--border-radius-input);
+    border: 1px solid var(--color-border);
+    font-size: var(--font-size-normal);
 }
 
+/* Case Name */
 .case-name {
     display: flex;
     justify-content: center;
@@ -52,23 +82,24 @@ h1 {
     height: 30px;
     margin-top: 20px;
     padding: 8px;
-    font-size: 2rem;
+    font-size: var(--font-size-h2);
     align-self: center;
-    background-color: #ccc;
+    background-color: var(--color-bg-case-name);
 }
 
+/* Section */
 .section {
-    background: white;
-    margin-bottom: 2rem;
-    padding: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 10px;
+    background: var(--color-bg-section);
+    margin-bottom: var(--margin-base);
+    padding: var(--padding-base);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-base);
 }
 
 .section h2 {
-    background: #eee;
+    background: var(--color-bg-h2);
     padding: 10px;
-    border-radius: 5px;
+    border-radius: var(--border-radius-small);
 }
 
 .section-title {
@@ -81,30 +112,32 @@ h1 {
 .section-total {
     width: 60px;
     height: 40px;
-    border: 2px solid grey;
-    background-color: #f9f9f9;
+    border: 2px solid var(--color-border-alt);
+    background-color: var(--color-bg-main);
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 0.9em;
+    font-size: var(--font-size-small);
     font-weight: normal;
 }
 
+/* Item */
 .item {
     display: flex;
     align-items: center;
     margin: 0.5rem 0;
     padding: 8px;
-    border: 1px solid #ccc;
-    font-size: 1.2rem;
+    border: 1px solid var(--color-border);
+    font-size: var(--font-size-item);
 }
 
 .item span {
     margin-left: auto;
 }
 
+/* Totals & Inputs */
 #total {
-    font-size: 1.5rem;
+    font-size: var(--font-size-total);
     margin-top: 1rem;
 }
 
@@ -112,6 +145,7 @@ h1 {
     margin-bottom: 1.5rem;
 }
 
+/* Question Checkbox */
 .question-checkbox {
     width: 25px;
     aspect-ratio: 1;
