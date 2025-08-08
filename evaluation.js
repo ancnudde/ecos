@@ -51,6 +51,7 @@ function renderForm(data) {
 
     superSections.forEach(superSection => {
         const superSectionEl = document.createElement('div');
+        superSectionEl.className = "super-section-bloc"
 
         if (superSection.title) {
             const superTitle = document.createElement('div');
