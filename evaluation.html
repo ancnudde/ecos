@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Grille d'évaluation</title>
+  <link rel="stylesheet" href="style_evaluation.css">
+  <script src="evaluation.js"></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+
+<body>
+
+  <h1>Grille d'Évaluation</h1>
+
+  <input type="file" id="fileInput" accept=".json">
+  <div id="formContainer" class="form-container"></div>
+  <div id="total">Total: 0</div>
+  <div style="margin-top: 20px;">
+    <button onclick="generateHTMLReport()">📄 View HTML Report</button>
+    <button onclick="exportAsPDF()">📕 Export as PDF</button>
+  </div>
+
+</body>
+
+</html>

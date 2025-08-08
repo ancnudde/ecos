@@ -1,0 +1,118 @@
+body {
+    font-family: Arial, sans-serif;
+    padding: 2rem;
+    background: #f9f9f9;
+}
+
+h1 {
+    margin-bottom: 1rem;
+}
+
+.super-section {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: mintcream;
+}
+
+.super-section-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    font-size: 1.6rem;
+}
+
+.super-section-total {
+    width: 60px;
+    height: 40px;
+    background-color: #f9f9f9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #ccc;
+}
+
+.student-name {
+    width: 200px;
+    height: 30px;
+    margin: 20px;
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1em;
+}
+
+.case-name {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 30px;
+    margin-top: 20px;
+    padding: 8px;
+    font-size: 2rem;
+    align-self: center;
+    background-color: #ccc;
+}
+
+.section {
+    background: white;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+}
+
+.section h2 {
+    background: #eee;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.section-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+}
+
+.section-total {
+    width: 60px;
+    height: 40px;
+    border: 2px solid grey;
+    background-color: #f9f9f9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.9em;
+    font-weight: normal;
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    margin: 0.5rem 0;
+    padding: 8px;
+    border: 1px solid #ccc;
+    font-size: 1.2rem;
+}
+
+.item span {
+    margin-left: auto;
+}
+
+#total {
+    font-size: 1.5rem;
+    margin-top: 1rem;
+}
+
+#fileInput {
+    margin-bottom: 1.5rem;
+}
+
+.question-checkbox {
+    width: 25px;
+    aspect-ratio: 1;
+}
