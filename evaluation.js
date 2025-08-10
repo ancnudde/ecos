@@ -47,13 +47,26 @@ function renderForm(data) {
     container.appendChild(caseName);
 
     let index = 0;
+    let superSectionIndex = 0;
+    let sectionIndex = 0;
     const superSections = data.superSections || [{ title: null, sections: data.sections }];
 
     superSections.forEach(superSection => {
         const superSectionEl = document.createElement('div');
         superSectionEl.className = "super-section-bloc"
+        superSectionEl.id = `superSection${superSectionIndex}`
 
         if (superSection.title) {
+
+            const superSectionNav = document.createElement('div');
+            superSectionNav.innerText = superSection.title;
+            superSectionNav.className = 'navigation-container__navigation-element navigation-container__navigation-element--supersection';
+            superSectionNav.dataset.superSectionIndex = superSectionIndex;
+            superSectionNav.addEventListener('click', function () {
+                document.getElementById(`superSection${this.dataset.superSectionIndex}`).scrollIntoView();
+            })
+            document.querySelector('.navigation-container').appendChild(superSectionNav)
+
             const superTitle = document.createElement('div');
             superTitle.className = 'super-section-title';
             superTitle.textContent = superSection.title;
@@ -63,10 +76,22 @@ function renderForm(data) {
             superSectionEl.appendChild(superTitle);
         }
 
+        superSectionIndex++;
+
         superSection.sections.forEach(section => {
             const sectionEl = document.createElement('div');
             sectionEl.className = 'section';
+            sectionEl.id = `section${sectionIndex}`
             sectionEl.dataset.maxScore = parseInt(section.maxScore) || 999;
+
+            const sectionNav = document.createElement('div');
+            sectionNav.innerText = section.title;
+            sectionNav.className = 'navigation-container__navigation-element navigation-container__navigation-element--section';
+            sectionNav.dataset.sectionIndex = sectionIndex;
+            sectionNav.addEventListener('click', function () {
+                document.getElementById(`section${this.dataset.sectionIndex}`).scrollIntoView();
+            })
+            document.querySelector('.navigation-container').appendChild(sectionNav)
 
             const title = document.createElement('h2');
             title.className = 'section-title';
@@ -75,6 +100,8 @@ function renderForm(data) {
             totalDisplay.className = 'section-total';
             title.appendChild(totalDisplay);
             sectionEl.appendChild(title);
+
+            sectionIndex++;
 
             section.questions.forEach(q => {
                 const item = document.createElement('div');
@@ -105,6 +132,9 @@ function renderForm(data) {
 
         container.appendChild(superSectionEl);
     });
+
+    setupSectionHighlighting();
+
 }
 
 function updateSectionScore(section) {
@@ -322,3 +352,48 @@ async function exportAsPDF() {
 
     pdf.save(`report_${studentName.replace(/\s+/g, '_')}_${studentFirstName.replace(/\s+/g, '_')}_${caseName.replace(/\s+/g, '_')}.pdf`);
 }
+
+function setupSectionHighlighting() {
+    const navElements = document.querySelectorAll(
+        '.navigation-container__navigation-element--section, .navigation-container__navigation-element--supersection'
+    );
+    const sectionElements = [
+        ...document.querySelectorAll('.section'),
+        ...document.querySelectorAll('.super-section-bloc')
+    ];
+
+    const navContainer = document.querySelector('.navigation-container');
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                // Remove highlight from all
+                navElements.forEach(nav => nav.classList.remove('active'));
+
+                // Find matching nav element
+                const id = entry.target.id;
+                const navMatch = [...navElements].find(nav => {
+                    return nav.dataset.sectionIndex == id.replace('section', '') ||
+                        nav.dataset.superSectionIndex == id.replace('superSection', '');
+                });
+                if (navMatch) {
+                    navMatch.classList.add('active');
+
+                    // Scroll nav container so active element stays visible
+                    navMatch.scrollIntoView({
+                        block: 'nearest',
+                        inline: 'nearest',
+                        behavior: 'smooth'
+                    });
+                }
+            }
+        });
+    }, {
+        root: container,      // Your scrollable content container
+        rootMargin: '0px 0px -80% 0px', // Trigger when section is near the top
+        threshold: 0
+    });
+
+    sectionElements.forEach(sec => observer.observe(sec));
+}
+
