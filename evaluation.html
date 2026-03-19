@@ -6,25 +6,39 @@
   <title>Grille d'évaluation</title>
   <link rel="stylesheet" href="style_evaluation.css">
   <script src="evaluation.js"></script>
-  <script
-    src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script
-    src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 
 <body>
 
-  <h1>Grille d'Évaluation</h1>
+  <div class="header-bloc">
+    <div class="header-bloc__upper-line">
+      <h1>Grille d'Évaluation</h1>
 
-  <input type="file" id="fileInput" accept=".json">
+      <label class="file-upload">
+        <input type="file" id="fileInput" accept=".JSON">
+        <span class="file-upload__button">Upload JSON</span>
+      </label>
+    </div>
+
+    <div class="student-box">
+      <input class="student-box__student-name" placeholder="Nom de l'étudiant"></input>
+      <input class="student-box__student-last-name" placeholder="Prénom de l'étudiant"></input>
+      <input class="student-box__student-last-name" placeholder="Evaluateur"></input>
+    </div>
+  </div>
   <div class="form-area">
     <div id="navigationContainer" class="navigation-container"></div>
     <div id="formContainer" class="form-container"></div>
   </div>
-  <div id="total">Total: 0</div>
-  <div style="margin-top: 20px;">
-    <button onclick="exportAsPDF()">📕 Export as PDF</button>
+  <div class="total-box">
+    <div class="total-box__text-score">Score:</div>
+    <div class="total-box__current-score">0</div>
+    <div class="total-box__separator">/</div>
+    <div class="total-box__max-score"></div>
   </div>
+  <button class="file-download">Exporter Excel</button>
 
 </body>
 

@@ -1,8 +1,433 @@
-let container, totalDisplay, fileInput;
+class QuestionItem extends HTMLElement {
+
+    constructor() {
+        super();
+        this.appendChild(this.render());
+        this.classList.add('question')
+    }
+
+    render() {
+        const template = document.createElement('template');
+        template.innerHTML = `
+            <input type="checkbox" class="question__question-checkbox">
+            <div class="question__question-title"></div>
+            <span class="question__question-total"></span>
+        `;
+        return template.content.cloneNode(true);
+    }
+
+    connectedCallback() {
+        const checkbox = this.querySelector('input');
+        const label = this.querySelector('.question__question-title');
+        const score = this.querySelector('.question__question-total');
+
+        label.textContent = this.dataset.text;
+        score.textContent = this.dataset.points;
+
+        this.addEventListener('click', (e) => {
+
+            if (e.target === checkbox) return;
+
+            checkbox.checked = !checkbox.checked;
+
+            this.dispatchEvent(new CustomEvent('score-change', { bubbles: true }));
+        });
+
+        checkbox.addEventListener('change', () => {
+            this.dispatchEvent(new CustomEvent('score-change', { bubbles: true }));
+        });
+    }
+
+    getScore() {
+        const checkbox = this.querySelector('input');
+        return checkbox.checked ? parseInt(this.dataset.points) : 0;
+    }
+}
+
+customElements.define('question-item', QuestionItem);
+
+class SectionBloc extends HTMLElement {
+
+    constructor() {
+        super();
+    }
+
+    render() {
+        const template = document.createElement('template');
+        template.innerHTML = `
+            <div class="section__section-title"> 
+                <div class="section__section-title__title-text"></div>
+                <div class="section__section-title__max-score"></div>
+                <div class="section__section-title__section-total">0</div>
+            </div>
+            <div class="section__questions"></div>
+        `;
+        return template.content.cloneNode(true);
+    }
+
+    connectedCallback() {
+        this.appendChild(this.render());
+        this.classList.add('section');
+        this.querySelector('.section__section-title__title-text').textContent = this.dataset.title;
+        this.querySelector('.section__section-title__max-score').textContent = `(Max: ${this.dataset.maxScore})`;
+        this.addEventListener('score-change', () => {
+            this.updateScore();
+        });
+    }
+
+    addQuestion(question) {
+        this.querySelector('.section__questions').appendChild(question);
+    }
+
+    updateScore() {
+        const questions = this.querySelectorAll('question-item');
+        let total = 0;
+
+        questions.forEach(q => total += q.getScore());
+
+        const max = parseInt(this.dataset.maxScore || 999);
+        total = Math.min(total, max);
+
+        this.querySelector('.section__section-title__section-total').textContent = total;
+        return total;
+    }
+
+    getScore() {
+        return parseInt(this.querySelector('.section__section-title__section-total').textContent);
+    }
+}
+
+customElements.define('section-bloc', SectionBloc);
+
+class SuperSectionBloc extends HTMLElement {
+    constructor() {
+        super();
+    }
+
+    render() {
+        let template = document.createElement('template');
+        template.innerHTML = `
+        <div class="super-section__title-bloc">
+          <div class="super-section__title-bloc__title">
+            ${this.dataset.title}
+          </div>
+          <div class="super-section__title-bloc__total"></div>
+        </div>
+        <textarea class="super-section__comment" placeholder="commentaire"></textarea>
+        <div class="super-section__sections-pane"></div>
+        `
+        return template.content.cloneNode(true);
+    }
+
+    connectedCallback() {
+        this.appendChild(this.render());
+        this.classList.add('super-section-bloc')
+
+        this.addEventListener('score-change', () => {
+            this.updateScore();
+        });
+
+    }
+
+    addSection(section) {
+        this.querySelector('.super-section__sections-pane').appendChild(section);
+    }
+
+    updateScore() {
+        const sections = this.querySelectorAll('section-bloc');
+        let total = 0;
+        sections.forEach(s => total += s.getScore());
+        this.querySelector('.super-section__title-bloc__total').textContent = total;
+        return total;
+    }
+}
+
+customElements.define('super-section-bloc', SuperSectionBloc);
+
+
+
+class FormHandler {
+
+    constructor() {
+        this.container = document.getElementById('formContainer');
+        this.updateTotalScore();
+    }
+
+    setupSectionHighlighting() {
+
+        const sections = [
+            ...document.querySelectorAll('.super-section-bloc'),
+            ...document.querySelectorAll('.section')
+        ];
+
+        const navElements = document.querySelectorAll(
+            '.navigation-container__navigation-element'
+        );
+
+        const navMap = new Map();
+
+        navElements.forEach(nav => {
+
+            if (nav.dataset.sectionIndex) {
+                navMap.set(`section${nav.dataset.sectionIndex}`, nav);
+            }
+
+            if (nav.dataset.superSectionIndex) {
+                navMap.set(`superSection${nav.dataset.superSectionIndex}`, nav);
+            }
+
+        });
+
+        const visibleSections = new Set();
+
+        const observer = new IntersectionObserver((entries) => {
+
+            entries.forEach(entry => {
+
+                if (entry.isIntersecting) {
+                    visibleSections.add(entry.target);
+                } else {
+                    visibleSections.delete(entry.target);
+                }
+
+            });
+
+            updateActiveSection();
+
+        }, {
+            root: null,
+            rootMargin: "-20% 0px -60% 0px",
+            threshold: 0
+        });
+
+        sections.forEach(section => observer.observe(section));
+
+        function updateActiveSection() {
+
+            if (visibleSections.size === 0) return;
+
+            let topSection = null;
+            let topOffset = Infinity;
+
+            visibleSections.forEach(section => {
+
+                const rect = section.getBoundingClientRect();
+
+                if (rect.top >= 0 && rect.top < topOffset) {
+                    topOffset = rect.top;
+                    topSection = section;
+                }
+
+            });
+
+            if (!topSection) return;
+
+            const navMatch = navMap.get(topSection.id);
+
+            if (!navMatch) return;
+
+            navElements.forEach(n => n.classList.remove('active'));
+            navMatch.classList.add('active');
+
+            navMatch.scrollIntoView({
+                block: "nearest",
+                inline: "nearest"
+            });
+
+        }
+
+    }
+
+    clearForm() {
+        this.container.innerHTML = '';
+        document.querySelector('.total-box__current-score').textContent = 0;
+    }
+
+    renderForm(data) {
+
+        const caseName = document.createElement('div');
+        caseName.className = "case-name";
+        caseName.innerText = `${data.title}`;
+        this.container.appendChild(caseName);
+
+        let superSectionIndex = 0;
+        let sectionIndex = 0;
+        const superSections = data.superSections || [{ title: null, sections: data.sections }];
+
+        superSections.forEach(superSection => {
+
+            const superSectionBloc = document.createElement('super-section-bloc');
+            superSectionBloc.dataset.title = superSection.title;
+            superSectionBloc.id = `superSection${superSectionIndex}`;
+            this.container.appendChild(superSectionBloc);
+
+            if (superSection.title) {
+
+                const superSectionNav = document.createElement('div');
+                superSectionNav.innerText = superSection.title;
+                superSectionNav.className = 'navigation-container__navigation-element navigation-container__navigation-element--supersection';
+                superSectionNav.dataset.superSectionIndex = superSectionIndex;
+                superSectionNav.addEventListener('click', function () {
+                    document.getElementById(`superSection${this.dataset.superSectionIndex}`).scrollIntoView();
+                })
+                document.querySelector('.navigation-container').appendChild(superSectionNav)
+            }
+
+            superSectionIndex++;
+
+
+            superSection.sections.forEach(section => {
+                const sectionEl = document.createElement('section-bloc');
+                sectionEl.dataset.maxScore = parseInt(section.maxScore);
+                sectionEl.dataset.title = section.title;
+                sectionEl.id = `section${sectionIndex}`;
+
+                const sectionNav = document.createElement('div');
+                sectionNav.innerText = section.title;
+                sectionNav.className = 'navigation-container__navigation-element navigation-container__navigation-element--section';
+                sectionNav.dataset.sectionIndex = sectionIndex;
+                sectionNav.addEventListener('click', function () {
+                    document.getElementById(`section${this.dataset.sectionIndex}`).scrollIntoView();
+                })
+
+                document.querySelector('.navigation-container').appendChild(sectionNav)
+                superSectionBloc.addSection(sectionEl);
+
+                sectionIndex++;
+
+                section.questions.forEach(question => {
+                    const item = new QuestionItem();
+                    item.dataset.text = question.text;
+                    item.dataset.points = question.points;
+                    sectionEl.appendChild(item);
+                });
+
+            });
+
+        });
+
+        this.setupSectionHighlighting();
+
+    }
+
+    updateTotalScore() {
+
+        this.container.addEventListener('score-change', () => {
+
+            let totalScore = 0;
+            const superSections = this.container.querySelectorAll('.super-section-bloc');
+            superSections.forEach(superSection => {
+                totalScore += superSection.updateScore();
+            });
+            document.querySelector('.total-box__current-score').textContent = totalScore;
+
+        });
+
+    }
+
+    setMaxScore() {
+        let maxScore = 0;
+        const sections = document.querySelectorAll('.section');
+        sections.forEach(section => {
+            maxScore += parseInt(section.dataset.maxScore)
+        });
+        document.querySelector('.total-box__max-score').innerText = maxScore;
+    }
+
+    exportCSV() {
+
+        const rows = [];
+
+        const caseName = document.querySelector('.case-name')?.innerText || "";
+
+        rows.push([
+            "Super Section",
+            "Section",
+            "Question",
+            "Score",
+            "Points"
+        ]);
+
+        const studentName = `${document.querySelector('.student-box__student-name').value}`;
+        const studentLastName = `${document.querySelector('.student-box__student-last-name').value}`;
+
+        this.container.querySelectorAll('super-section-bloc').forEach(superSection => {
+
+            const superTitle = superSection.dataset.title || "";
+
+
+            superSection.querySelectorAll('section-bloc').forEach(section => {
+
+                const sectionTitle = section.dataset.title;
+
+                section.querySelectorAll('question-item').forEach(question => {
+
+                    const text = question.dataset.text;
+                    const points = `/${question.dataset.points}`;
+                    const score = question.getScore();
+
+                    rows.push([
+                        superTitle,
+                        sectionTitle,
+                        text,
+                        score,
+                        points
+                    ]);
+
+                });
+
+            });
+
+        });
+
+        this.container.querySelectorAll('super-section-bloc').forEach(superSection => {
+            const superTitle = superSection.dataset.title || "";
+            const comment = superSection.querySelector('textarea')?.value || "";
+
+            rows.push([
+                superTitle,
+                superSection.updateScore(),
+                comment
+            ]);
+        });
+
+        const finalScore = document.querySelector('.total-box__current-score')?.innerText || 0;
+
+
+        rows.push([
+            "FINAL TOTAL",
+            finalScore,
+            ""
+        ]);
+
+        this.downloadCSV(rows, `${caseName}_${studentLastName}_${studentName}.csv`);
+
+    }
+
+    downloadCSV(rows, filename) {
+
+        const csvContent = rows
+            .map(row => row.map(value => `"${value}"`).join(";"))
+            .join("\n");
+
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
+
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+    }
+
+
+}
 
 window.onload = function () {
-    container = document.getElementById('formContainer');
-    totalDisplay = document.getElementById('total');
+    renderer = new FormHandler();
+    document.querySelector('.file-download').addEventListener('click', function () { renderer.exportCSV() })
     fileInput = document.getElementById('fileInput');
 
     fileInput.addEventListener('change', function (event) {
@@ -13,9 +438,11 @@ window.onload = function () {
         reader.onload = function (e) {
             try {
                 const json = JSON.parse(e.target.result);
-                clearForm();
-                renderForm(json);
+                renderer.clearForm();
+                renderer.renderForm(json);
+                renderer.setMaxScore();
             } catch (err) {
+                console.log(err)
                 alert("Erreur JSON : " + err.message);
             }
         };
@@ -23,377 +450,10 @@ window.onload = function () {
     });
 };
 
-function clearForm() {
-    container.innerHTML = '';
-    totalDisplay.textContent = 'Total: 0';
-}
 
-function renderForm(data) {
-    const studentName = document.createElement("input");
-    studentName.type = "text";
-    studentName.placeholder = "NOM";
-    studentName.className = "student-name";
-    container.appendChild(studentName);
 
-    const studentFirstName = document.createElement("input");
-    studentFirstName.type = "text";
-    studentFirstName.placeholder = "Prénom";
-    studentFirstName.className = "student-name student-first-name";
-    container.appendChild(studentFirstName);
 
-    const caseName = document.createElement('div');
-    caseName.className = "case-name";
-    caseName.innerText = `${data.title}`;
-    container.appendChild(caseName);
 
-    let index = 0;
-    let superSectionIndex = 0;
-    let sectionIndex = 0;
-    const superSections = data.superSections || [{ title: null, sections: data.sections }];
 
-    superSections.forEach(superSection => {
-        const superSectionEl = document.createElement('div');
-        superSectionEl.className = "super-section-bloc"
-        superSectionEl.id = `superSection${superSectionIndex}`
 
-        if (superSection.title) {
-
-            const superSectionNav = document.createElement('div');
-            superSectionNav.innerText = superSection.title;
-            superSectionNav.className = 'navigation-container__navigation-element navigation-container__navigation-element--supersection';
-            superSectionNav.dataset.superSectionIndex = superSectionIndex;
-            superSectionNav.addEventListener('click', function () {
-                document.getElementById(`superSection${this.dataset.superSectionIndex}`).scrollIntoView();
-            })
-            document.querySelector('.navigation-container').appendChild(superSectionNav)
-
-            const superTitle = document.createElement('div');
-            superTitle.className = 'super-section-title';
-            superTitle.textContent = superSection.title;
-            const superTotalDisplay = document.createElement('div');
-            superTotalDisplay.className = 'super-section-total';
-            superTitle.appendChild(superTotalDisplay);
-            superSectionEl.appendChild(superTitle);
-        }
-
-        superSectionIndex++;
-
-        superSection.sections.forEach(section => {
-            const sectionEl = document.createElement('div');
-            sectionEl.className = 'section';
-            sectionEl.id = `section${sectionIndex}`
-            sectionEl.dataset.maxScore = parseInt(section.maxScore) || 999;
-
-            const sectionNav = document.createElement('div');
-            sectionNav.innerText = section.title;
-            sectionNav.className = 'navigation-container__navigation-element navigation-container__navigation-element--section';
-            sectionNav.dataset.sectionIndex = sectionIndex;
-            sectionNav.addEventListener('click', function () {
-                document.getElementById(`section${this.dataset.sectionIndex}`).scrollIntoView();
-            })
-            document.querySelector('.navigation-container').appendChild(sectionNav)
-
-            const title = document.createElement('h2');
-            title.className = 'section-title';
-            title.textContent = section.title;
-            const totalDisplay = document.createElement('div');
-            totalDisplay.className = 'section-total';
-            title.appendChild(totalDisplay);
-            sectionEl.appendChild(title);
-
-            sectionIndex++;
-
-            section.questions.forEach(q => {
-                const item = document.createElement('div');
-                item.className = 'item';
-
-                const checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                checkbox.id = `q${index++}`;
-                checkbox.classList.add('question-checkbox');
-                checkbox.dataset.points = q.points;
-                checkbox.addEventListener('change', updateTotal);
-
-                const label = document.createElement('label');
-                label.setAttribute('for', checkbox.id);
-                label.textContent = q.text;
-
-                const score = document.createElement('span');
-                score.textContent = `${q.points >= 0 ? '+' : ''}${q.points}`;
-
-                item.appendChild(checkbox);
-                item.appendChild(label);
-                item.appendChild(score);
-                sectionEl.appendChild(item);
-            });
-
-            superSectionEl.appendChild(sectionEl);
-        });
-
-        container.appendChild(superSectionEl);
-    });
-
-    setupSectionHighlighting();
-
-}
-
-function updateSectionScore(section) {
-    const checkboxes = section.querySelectorAll('input[type="checkbox"]');
-    let total = 0;
-    checkboxes.forEach(cb => {
-        if (cb.checked) {
-            total += parseInt(cb.dataset.points);
-        }
-    });
-    const max = parseInt(section.dataset.maxScore);
-    total = Math.min(total, max);
-    section.querySelector('.section-total').textContent = total;
-    return total;
-}
-
-function updateSuperSectionScore(superSection) {
-    const sections = superSection.querySelectorAll('.section');
-    let total = 0;
-    sections.forEach(section => {
-        total += updateSectionScore(section);
-    });
-    const superTotal = superSection.querySelector('.super-section-total');
-    if (superTotal) superTotal.textContent = total;
-    return total;
-}
-
-function updateTotal() {
-    let total = 0;
-    const superSections = document.querySelectorAll('.super-section-title').length > 0
-        ? document.querySelectorAll('.super-section-title').forEach(sup => {
-            total += updateSuperSectionScore(sup.parentNode);
-        })
-        : document.querySelectorAll('.section').forEach(section => {
-            total += updateSectionScore(section);
-        });
-
-    totalDisplay.textContent = `Total: ${total}`;
-}
-
-function generateHTMLReport() {
-    const name = document.querySelector('.student-name')?.value || 'Unnamed';
-    const totalScore = totalDisplay.textContent;
-    const reportWin = window.open('', '_blank');
-
-    let html = `
-      <html><head><title>Report - ${name}</title>
-      <style>
-        body { font-family: "Segoe UI", sans-serif; font-size: 12px; padding: 20px; }
-        h1 { font-size: 16px; margin-bottom: 4px; }
-        h2 { font-size: 14px; margin: 12px 0 4px 0; border-bottom: 1px solid #ccc; }
-        .summary { margin-bottom: 10px; font-size: 13px; font-weight: bold; }
-        ul { padding-left: 15px; margin: 4px 0 10px 0; }
-        li { margin: 2px 0; line-height: 1.3; }
-        .score { font-weight: bold; float: right; }
-      </style></head><body>
-      <h1>Report: ${name}</h1>
-      <div class="summary">${totalScore}</div>
-      `;
-
-    document.querySelectorAll('.section').forEach(section => {
-        const sectionTitle = section.querySelector('.section-title')?.textContent?.trim();
-        const items = section.querySelectorAll('.item');
-        if (!items.length) return;
-
-        html += `<h2>${sectionTitle}</h2><ul>`;
-        items.forEach(item => {
-            const checkbox = item.querySelector('input[type="checkbox"]');
-            const label = item.querySelector('label')?.textContent?.trim();
-            const score = checkbox.checked ? item.querySelector('span')?.textContent : '0';
-            html += `<li>${label} <span class="score">${score}</span></li>`;
-        });
-        html += `</ul>`;
-    });
-
-    html += `</body></html>`;
-    reportWin.document.write(html);
-    reportWin.document.close();
-}
-
-async function exportAsPDF() {
-    const { jsPDF } = window.jspdf;
-    const studentName = document.querySelector('.student-name')?.value || 'Unnamed';
-    const studentFirstName = document.querySelector('.student-first-name')?.value || 'Unnamed';
-    const caseName = document.querySelector('.case-name')?.innerText || 'Case';
-
-    // Temporary styled container
-    const tempContainer = document.createElement('div');
-    tempContainer.style = `
-    padding: 20px;
-    font-family: 'Segoe UI', sans-serif;
-    font-size: 12px;
-    background: white;
-    color: #222;
-    max-width: 800px;
-  `;
-    tempContainer.innerHTML = `
-    <h1 style="font-size:16px; margin-bottom: 6px;">Report: ${studentName}</h1>
-    <div style="font-size:13px; font-weight:bold; margin-bottom: 16px;">${totalDisplay.textContent}</div>
-  `;
-
-    const allSuperSections = document.querySelectorAll('.super-section-title');
-    const isSuperStructured = allSuperSections.length > 0;
-
-    if (isSuperStructured) {
-        allSuperSections.forEach(superTitleEl => {
-            const superTitleText = superTitleEl.childNodes[0]?.textContent?.trim() || '';
-            const superContainer = document.createElement('div');
-            superContainer.innerHTML = `
-        <h2 style="font-size:14px; margin:18px 0 6px 0; border-bottom:1px solid #aaa; background-color: #ccc; padding: 8px">
-          ${superTitleText}
-        </h2>
-      `;
-
-            const superParent = superTitleEl.parentNode;
-            const sections = superParent.querySelectorAll('.section');
-
-            sections.forEach(section => {
-                const sectionTitle = section.querySelector('.section-title')?.childNodes[0]?.textContent?.trim();
-                const sectionScore = section.querySelector('.section-total')?.textContent?.trim() || '0';
-
-                const sectionHTML = document.createElement('div');
-                sectionHTML.innerHTML = `
-          <div style="font-size:13px; margin:10px 0 4px 0; font-weight:bold; display:flex; justify-content:space-between; border-bottom:1px dashed #ccc; background-color: #f9f9f9; padding: 8px;">
-            <span>${sectionTitle}</span>
-            <span>Score: ${sectionScore}</span>
-          </div>
-        `;
-
-                const ul = document.createElement('ul');
-                ul.style = "padding-left:15px; margin:4px 0 10px 0; list-style: none;";
-
-                section.querySelectorAll('.item').forEach(item => {
-                    const checkbox = item.querySelector('input[type="checkbox"]');
-                    const label = item.querySelector('label')?.textContent?.trim();
-                    const rawScore = item.querySelector('span')?.textContent?.trim();
-                    const score = checkbox.checked ? rawScore : '0';
-
-                    const li = document.createElement('li');
-                    li.style = "margin:2px 0; line-height:1.4; display:flex; justify-content:space-between; border-bottom:1px dotted #ddd;";
-                    li.innerHTML = `<span>• ${label}</span><span><strong>${score}</strong></span>`;
-                    ul.appendChild(li);
-                });
-
-                sectionHTML.appendChild(ul);
-                superContainer.appendChild(sectionHTML);
-            });
-
-            tempContainer.appendChild(superContainer);
-        });
-    } else {
-        document.querySelectorAll('.section').forEach(section => {
-            const sectionTitle = section.querySelector('.section-title')?.textContent?.trim();
-            const sectionScore = section.querySelector('.section-total')?.textContent?.trim() || '0';
-
-            const sectionHTML = document.createElement('div');
-            sectionHTML.innerHTML = `
-        <div style="font-size:13px; margin:10px 0 4px 0; font-weight:bold; display:flex; justify-content:space-between; border-bottom:1px dashed #ccc;">
-          <span>${sectionTitle}</span>
-          <span>Score: ${sectionScore}</span>
-        </div>
-      `;
-
-            const ul = document.createElement('ul');
-            ul.style = "padding-left:15px; margin:4px 0 10px 0; list-style: none;";
-
-            section.querySelectorAll('.item').forEach(item => {
-                const checkbox = item.querySelector('input[type="checkbox"]');
-                const label = item.querySelector('label')?.textContent?.trim();
-                const rawScore = item.querySelector('span')?.textContent?.trim();
-                const score = checkbox.checked ? rawScore : '0';
-
-                const li = document.createElement('li');
-                li.style = "margin:2px 0; line-height:1.4; display:flex; justify-content:space-between; border-bottom:1px dotted #ddd;";
-                li.innerHTML = `<span>• ${label}</span><span><strong>${score}</strong></span>`;
-                ul.appendChild(li);
-            });
-
-            sectionHTML.appendChild(ul);
-            tempContainer.appendChild(sectionHTML);
-        });
-    }
-
-    document.body.appendChild(tempContainer);
-    const canvas = await html2canvas(tempContainer, { scale: 2 });
-    document.body.removeChild(tempContainer);
-
-    const pdf = new jsPDF('p', 'pt', 'a4');
-    const imgData = canvas.toDataURL('image/png');
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = pdf.internal.pageSize.getHeight();
-    const imgWidth = pdfWidth - 40;
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-    let offsetY = 0;
-    let pageHeightLeft = imgHeight;
-
-    while (pageHeightLeft > 0) {
-        const pageCanvas = document.createElement('canvas');
-        const ctx = pageCanvas.getContext('2d');
-        const pageImageHeight = Math.min(pageHeightLeft, pdfHeight - 40);
-
-        pageCanvas.width = canvas.width;
-        pageCanvas.height = (pageImageHeight * canvas.width) / imgWidth;
-
-        ctx.drawImage(canvas, 0, offsetY, canvas.width, pageCanvas.height, 0, 0, canvas.width, pageCanvas.height);
-        const pageImg = pageCanvas.toDataURL('image/png');
-
-        if (offsetY > 0) pdf.addPage();
-        pdf.addImage(pageImg, 'PNG', 20, 20, imgWidth, pageImageHeight);
-
-        offsetY += pageCanvas.height;
-        pageHeightLeft -= pageImageHeight;
-    }
-
-    pdf.save(`report_${studentName.replace(/\s+/g, '_')}_${studentFirstName.replace(/\s+/g, '_')}_${caseName.replace(/\s+/g, '_')}.pdf`);
-}
-
-function setupSectionHighlighting() {
-    const navElements = document.querySelectorAll(
-        '.navigation-container__navigation-element--section, .navigation-container__navigation-element--supersection'
-    );
-    const sectionElements = [
-        ...document.querySelectorAll('.section'),
-        ...document.querySelectorAll('.super-section-bloc')
-    ];
-
-    const navContainer = document.querySelector('.navigation-container');
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                // Remove highlight from all
-                navElements.forEach(nav => nav.classList.remove('active'));
-
-                // Find matching nav element
-                const id = entry.target.id;
-                const navMatch = [...navElements].find(nav => {
-                    return nav.dataset.sectionIndex == id.replace('section', '') ||
-                        nav.dataset.superSectionIndex == id.replace('superSection', '');
-                });
-                if (navMatch) {
-                    navMatch.classList.add('active');
-
-                    // Scroll nav container so active element stays visible
-                    navMatch.scrollIntoView({
-                        block: 'nearest',
-                        inline: 'nearest',
-                        behavior: 'smooth'
-                    });
-                }
-            }
-        });
-    }, {
-        root: container,      // Your scrollable content container
-        rootMargin: '0px 0px -80% 0px', // Trigger when section is near the top
-        threshold: 0
-    });
-
-    sectionElements.forEach(sec => observer.observe(sec));
-}
 

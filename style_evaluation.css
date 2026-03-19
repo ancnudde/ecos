@@ -1,3 +1,7 @@
+* {
+    box-sizing: border-box;
+}
+
 :root {
     --font-family-base: Arial, sans-serif;
     --padding-base: 1rem;
@@ -28,29 +32,128 @@
 /* Global Styles */
 body {
     font-family: var(--font-family-base);
-    padding: 20px;
     margin: 0;
     background: var(--color-bg-main);
+    width: 100vw;
+    height: 100vh;
+}
+
+.header-bloc {
+    width: 50%;
+    height: 170px;
+    padding: 12px;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
+}
+
+.header-bloc__upper-line {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 12px;
+}
+
+.file-upload input[type="file"] {
+    display: none;
+}
+
+.file-upload__button {
+    display: inline-block;
+    padding: 10px 18px;
+    background: #4f46e5;
+    color: white;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.file-upload__button:hover {
+    background: #4338ca;
+    transform: translateY(-1px);
+}
+
+.file-upload__button:active {
+    transform: translateY(0);
+}
+
+.student-box {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.student-box__student-name {
+    width: 200px;
+    height: 25px;
+    margin: 20px;
+    padding: 8px;
+    border-radius: var(--border-radius-input);
+    border: 1px solid var(--color-border);
+    font-size: var(--font-size-normal);
+}
+
+.student-box__student-last-name {
+    width: 200px;
+    height: 30px;
+    margin: 20px;
+    padding: 8px;
+    border-radius: var(--border-radius-input);
+    border: 1px solid var(--color-border);
+    font-size: var(--font-size-normal);
+}
+
+.student-box__evaluator-name {
+    width: 200px;
+    height: 30px;
+    margin: 20px;
+    padding: 8px;
+    border-radius: var(--border-radius-input);
+    border: 1px solid var(--color-border);
+    font-size: var(--font-size-normal);
+}
+
+.case-name {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 12px;
+    font-size: var(--font-size-h2);
+    align-self: center;
+    background-color: var(--color-bg-case-name);
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+.form-area {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    height: calc(100% - 250px);
+    width: 100%;
+}
+
+.form-container {
+    height: 100%;
+    overflow-y: auto;
+    padding: 0;
+    width: calc(100% - 300px);
 }
 
 .navigation-container {
     width: 300px;
     max-height: 100%;
     align-self: flex-start;
-    position: sticky;
-    left: 5px;
-    top: 10%;
-    padding: 20px;
     border: var(--border-radius-base);
     background-color: var(--color-bg-section);
     overflow-y: auto;
 }
 
 .navigation-container__navigation-element {
-    width: calc(100% - 40px);
+    width: 100%;
     padding: 10px;
     text-wrap: pretty;
     border-bottom: 1px solid var(--color-border);
@@ -64,7 +167,7 @@ body {
 
 .navigation-container__navigation-element--section {
     font-size: var(--font-size-normal);
-    padding-left: 30px;
+    padding-left: 40px;
 }
 
 .navigation-container__navigation-element--question {
@@ -75,19 +178,6 @@ body {
     background-color: #69aaef;
     color: white;
     font-weight: bold;
-}
-
-.form-area {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 70vh;
-}
-
-.form-container {
-    max-height: 80vh;
-    overflow-y: scroll;
-    padding: 0;
 }
 
 /* Super Section */
@@ -105,74 +195,29 @@ body {
     margin: 20px;
     border: 1px solid var(--color-border);
     border-radius: var(--border-radius-base);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.super-section-title {
+.super-section__title-bloc {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.super-section__title-bloc__title {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 10px;
     font-size: var(--font-size-h1);
+    width: 100%;
+    align-self: flex-start;
 }
 
-.super-section-total {
-    width: 60px;
-    height: 40px;
-    background-color: var(--color-bg-main);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 1px solid var(--color-border);
-}
-
-/* Student Name */
-.student-name {
-    width: 200px;
-    height: 30px;
-    margin: 20px;
-    padding: 8px;
-    border-radius: var(--border-radius-input);
-    border: 1px solid var(--color-border);
-    font-size: var(--font-size-normal);
-}
-
-/* Case Name */
-.case-name {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: calc(100% - 16px);
-    height: 30px;
-    margin-top: 20px;
-    padding: 8px;
-    font-size: var(--font-size-h2);
-    align-self: center;
-    background-color: var(--color-bg-case-name);
-}
-
-/* Section */
-.section {
-    background: var(--color-bg-section);
-    margin-bottom: var(--margin-base);
-    padding: var(--padding-base);
-    border: 1px solid var(--color-border);
-    border-radius: var(--border-radius-base);
-}
-
-.section h2 {
-    background: var(--color-bg-h2);
-    padding: 10px;
-    border-radius: var(--border-radius-small);
-}
-
-.section-title {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px;
-}
-
-.section-total {
+.super-section__title-bloc__total {
     width: 60px;
     height: 40px;
     border: 2px solid var(--color-border-alt);
@@ -180,40 +225,131 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: var(--font-size-small);
+    font-size: 20px;
+    font-weight: normal;
+}
+
+.super-section__comment {
+    width: 80%;
+    height: 100px;
+    padding: 12px;
+    margin: 12px;
+}
+
+.super-section__sections-pane {
+    width: 100%;
+}
+
+
+
+.section {
+    background: var(--color-bg-section);
+    margin-bottom: var(--margin-base);
+    padding: var(--padding-base);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-base);
+    width: calc(100% - 12px);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 10px;
+}
+
+.section__section-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: var(--color-bg-h2);
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+.section__section-title__title-text {
+    font-size: 24px;
+    font-weight: bold;
+    max-width: 70%;
+}
+
+.section__section-title__max-score {
+    margin-left: auto;
+    font-size: 16px;
+    font-weight: normal;
+    padding-right: 8px;
+}
+
+
+.section__section-title__section-total {
+    width: 60px;
+    height: 40px;
+    border: 2px solid var(--color-border-alt);
+    background-color: var(--color-bg-main);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
     font-weight: normal;
 }
 
 /* Item */
-.item {
+.question {
     display: flex;
     align-items: center;
     margin: 0.5rem 0;
     padding: 8px;
     border: 1px solid var(--color-border);
     font-size: var(--font-size-item);
+    cursor: pointer;
 }
 
-.item span {
+.question__question-title {
+    padding-left: 12px;
+}
+
+.question__question-total {
     margin-left: auto;
 }
 
-/* Totals & Inputs */
-#total {
+.question__question-checkbox {
+    width: 20px;
+    height: 20px;
+}
+
+.total-box {
     font-size: var(--font-size-total);
     margin-top: 1rem;
     padding: 20px;
     background-color: lightgrey;
     opacity: 1;
     border-radius: 12px;
+    position: absolute;
+    left: 50%;
+    bottom: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
 }
 
-#fileInput {
-    margin-bottom: 1.5rem;
+.total-box__current-score {}
+
+.file-download {
+    display: inline-block;
+    padding: 10px 18px;
+    background: rgb(91, 181, 91);
+    color: white;
+    font-size: 18px;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: absolute;
+    bottom: 20px;
+    right: 30px;
 }
 
-/* Question Checkbox */
-.question-checkbox {
-    width: 25px;
-    aspect-ratio: 1;
+.file-download:hover {
+    background: green;
+    transform: translateY(-1px);
+    position: absolute;
 }

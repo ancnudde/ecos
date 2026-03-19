@@ -1,0 +1,378 @@
+{
+  "title": "Mycose vaginale",
+  "superSections": [
+    {
+      "title": "Evaluation du contexte + anamnèse pharmaceutique-Quidam",
+      "sections": [
+        {
+          "title": "Qui",
+          "questions": [
+            {
+              "text": "C’est bien pour vous ?",
+              "points": 1
+            },
+            {
+              "text": "Enceinte, allaitante ?",
+              "points": 1
+            },
+            {
+              "text": "Allergies à mentionner ?",
+              "points": 1
+            },
+            {
+              "text": "Sports ? Lequel(s) ?",
+              "points": 1
+            }
+          ],
+          "maxScore": "4"
+        },
+        {
+          "title": "Quand",
+          "questions": [
+            {
+              "text": "Depuis combien de temps ?",
+              "points": 2
+            }
+          ],
+          "maxScore": "2"
+        },
+        {
+          "title": "Où",
+          "questions": [
+            {
+              "text": "Démangeaisons lèvres/vulve (Externes)",
+              "points": 2
+            },
+            {
+              "text": "Démangeaisons vaginales (Internes)",
+              "points": 2
+            }
+          ],
+          "maxScore": "4"
+        },
+        {
+          "title": "Quoi : Symptômes",
+          "questions": [
+            {
+              "text": "Quantité des sécrétions vaginales inhabituelles ?",
+              "points": 2
+            },
+            {
+              "text": "Couleur/aspect des sécrétions : épaisses, blanches , lait caillé/mousseuses?",
+              "points": 2
+            },
+            {
+              "text": "Odeur des sécrétions : sans/poisson",
+              "points": 2
+            },
+            {
+              "text": "Diarrhées par suite des antibiotiques",
+              "points": 1
+            },
+            {
+              "text": "Douleurs lors des rapports sexuels ?",
+              "points": 1
+            }
+          ],
+          "maxScore": "6"
+        },
+        {
+          "title": "REDFLAGS",
+          "questions": [
+            {
+              "text": "Lésions visibles, ulcérations, boutons ?",
+              "points": 1
+            },
+            {
+              "text": "Infection : fièvre, état général ?",
+              "points": 1
+            },
+            {
+              "text": "Brûlures/picotements lors des mictions/ urine rosée?",
+              "points": 1
+            },
+            {
+              "text": "Douleurs bas ventre",
+              "points": 1
+            },
+            {
+              "text": "Douleurs bas du dos",
+              "points": 1
+            }
+          ],
+          "maxScore": "4"
+        },
+        {
+          "title": "Étiologie de la plainte",
+          "questions": [
+            {
+              "text": "Prise récente d’antibiotique ?",
+              "points": 3
+            },
+            {
+              "text": "Savon intime, gel douche, douche vaginale",
+              "points": 1
+            },
+            {
+              "text": "Serviettes hygiéniques journalières; Vêtements serrant, lingerie",
+              "points": 1
+            },
+            {
+              "text": "Facteurs améliorant (détériorant) la situation : rapports récents…",
+              "points": 1
+            },
+            {
+              "text": "Existence d’un partenaire ? A-t-il des symptômes ?",
+              "points": 2
+            },
+            {
+              "text": "Métier",
+              "points": 1
+            },
+            {
+              "text": "Avez-vous vos règles ?",
+              "points": 1
+            }
+          ],
+          "maxScore": "8"
+        },
+        {
+          "title": "Récidives",
+          "questions": [
+            {
+              "text": "Est-ce déjà arrivé auparavant ?",
+              "points": 2
+            }
+          ],
+          "maxScore": "2"
+        },
+        {
+          "title": "Action(s) déjà entreprise(s)",
+          "questions": [
+            {
+              "text": "Avez-vous déjà testé quelque chose ?",
+              "points": 4
+            }
+          ],
+          "maxScore": "4"
+        },
+        {
+          "title": "DPP/Historique",
+          "questions": [
+            {
+              "text": "Avez-vous un traitement en cours/compléments alimentaires ?",
+              "points": 4
+            }
+          ],
+          "maxScore": "4"
+        }
+      ]
+    },
+    {
+      "title": "Prise de décision claire par rapport à la plainte",
+      "sections": [
+        {
+          "title": "Diagnostic suspecté/ prise en charge de la plainte",
+          "questions": [
+            {
+              "text": "Evoque le diagnostic suspecté : « candidose probable avec antibiothérapie »",
+              "points": 5
+            },
+            {
+              "text": "Propose un antimycosique à la suite de la demande de la patiente: Clotrimazole (Canestene® gyn)",
+              "points": 10
+            },
+            {
+              "text": "Propose un antimycosique à la suite de la demande de la patiente: Miconazole (Gyno-daktarin® cr. vag.)",
+              "points": 10
+            },
+            {
+              "text": "Alternatives naturelles ou de la parapharmacie/cosmétique UI/UE",
+              "points": -1
+            },
+            {
+              "text": "Renvoi chez le médecin sans prise en charge à l’officine",
+              "points": -1
+            },
+            {
+              "text": "Propose un médicament avec ordonnance",
+              "points": -1
+            },
+            {
+              "text": "Propose un médicament dont la forme galénique n’est pas adaptée à l’application intravaginale/ ou ne traite que les parties externes",
+              "points": -1
+            }
+          ],
+          "maxScore": "15"
+        }
+      ]
+    },
+    {
+      "title": "Conseils de délivrance et recommandations",
+      "sections": [
+        {
+          "title": "Bon usage de la médication proposée - Posologie complète:",
+          "questions": [
+            {
+              "text": "Quantité (applicateur rempli)",
+              "points": 3
+            },
+            {
+              "text": "Fréquence (nb de fois par jour)",
+              "points": 3
+            },
+            {
+              "text": "Moment de prise: matin, midi, soir ?",
+              "points": 3
+            },
+            {
+              "text": "Durée du traitement (nb de jours)",
+              "points": 3
+            },
+            {
+              "text": "Vous devriez voir une amélioration après…",
+              "points": 1
+            }
+          ],
+          "maxScore": "12"
+        },
+        {
+          "title": "Bon usage de la médication proposée - Mode d’emploi",
+          "questions": [
+            {
+              "text": "Visser l’applicateur sur le tube",
+              "points": 2
+            },
+            {
+              "text": "Presser le tube pour remplir l’applicateur crème",
+              "points": 2
+            },
+            {
+              "text": "Dévisser l’applicateur",
+              "points": 2
+            },
+            {
+              "text": "Introduire profondément l’applicateur dans le vagin et presser le piston complètement",
+              "points": 1
+            },
+            {
+              "text": "Position couchée plus facile",
+              "points": 1
+            },
+            {
+              "text": "Jeter l’applicateur en carton ou laver l’applicateur en plastique",
+              "points": 1
+            },
+            {
+              "text": "Appliquer également la crème à l’extérieur",
+              "points": 1
+            }
+          ],
+          "maxScore": "8"
+        },
+        {
+          "title": "Recommandations médication UE",
+          "questions": [
+            {
+              "text": "Eviter les endroits chauds et humides ( les bains, piscine, jacuzzis)",
+              "points": 1
+            },
+            {
+              "text": "Préférer la douche au bain",
+              "points": 1
+            },
+            {
+              "text": "Sécher soigneusement la zone du périnée",
+              "points": 1
+            },
+            {
+              "text": "Eviter les savons acides ou trop détergents pour la toilette intime.",
+              "points": 1
+            },
+            {
+              "text": "Porter des vêtements respirants lors du sport (coton, fibres techniques anti-humidité)",
+              "points": 1
+            },
+            {
+              "text": "Porter des vêtements amples, sous-vêtements en coton",
+              "points": 1
+            },
+            {
+              "text": "Pas gants de toilette et fleurs de douche",
+              "points": 1
+            }
+          ],
+          "maxScore": "5"
+        },
+        {
+          "title": "Rassure la patiente",
+          "questions": [
+            {
+              "text": "Pas une allergie à l’antibiotique",
+              "points": 1
+            },
+            {
+              "text": "Fréquent avec antibiothérapie",
+              "points": 1
+            },
+            {
+              "text": "Continuer l’antibiothérapie afin d’éviter les rechutes",
+              "points": 1
+            }
+          ],
+          "maxScore": "2"
+        },
+        {
+          "title": "Suivi du patient; Propose consultation médicale + frottis",
+          "questions": [
+            {
+              "text": "Pas d’amélioration du prurit après 2-3 jours",
+              "points": 1
+            },
+            {
+              "text": "Changement des sécrétions : aspect/couleur/odeur",
+              "points": 1
+            },
+            {
+              "text": "Fièvre, déclin état général",
+              "points": 1
+            },
+            {
+              "text": "Apparition de douleurs",
+              "points": 1
+            },
+            {
+              "text": "Si ces symptômes apparaissent >4 x/an ou après les règles",
+              "points": 1
+            },
+            {
+              "text": "Si le partenaire présente des symptômes : applic crème 2x/j",
+              "points": 1
+            }
+          ],
+          "maxScore": "3"
+        },
+        {
+          "title": "Propose de la documentation /web infos",
+          "questions": [
+            {
+              "text": "Mode emploi crème, fiche candidoses",
+              "points": 1
+            }
+          ],
+          "maxScore": "1"
+        },
+        {
+          "title": "Faute",
+          "questions": [
+            {
+              "text": "Faute grave",
+              "points": -10
+            }
+          ],
+          "maxScore": "0"
+        }
+      ]
+    }
+  ]
+}
