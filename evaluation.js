@@ -1,3 +1,10 @@
+
+const FIRSTNAME_INDEX = 0;
+const NAME_INDEX = 1;
+const START_ROW = 1;
+
+
+
 class QuestionItem extends HTMLElement {
 
     constructor() {
@@ -340,6 +347,28 @@ class FormHandler {
 
         const caseName = document.querySelector('.case-name')?.innerText || "";
 
+        const fullName = document.querySelector('.student-box__student-name').value || "unknown";
+        const [studentName, studentLastName] = fullName.split(" ");
+
+        const finalScore = document.querySelector('.total-box__current-score')?.innerText || 0;
+
+        rows.push([
+            "FINAL TOTAL",
+            finalScore,
+            ""
+        ]);
+
+        this.container.querySelectorAll('super-section-bloc').forEach(superSection => {
+            const superTitle = superSection.dataset.title || "";
+            const comment = superSection.querySelector('textarea')?.value || "";
+
+            rows.push([
+                superTitle,
+                superSection.updateScore(),
+                comment
+            ]);
+        });
+
         rows.push([
             "Super Section",
             "Section",
@@ -347,9 +376,6 @@ class FormHandler {
             "Score",
             "Points"
         ]);
-
-        const studentName = `${document.querySelector('.student-box__student-name').value}`;
-        const studentLastName = `${document.querySelector('.student-box__student-last-name').value}`;
 
         this.container.querySelectorAll('super-section-bloc').forEach(superSection => {
 
@@ -380,26 +406,6 @@ class FormHandler {
 
         });
 
-        this.container.querySelectorAll('super-section-bloc').forEach(superSection => {
-            const superTitle = superSection.dataset.title || "";
-            const comment = superSection.querySelector('textarea')?.value || "";
-
-            rows.push([
-                superTitle,
-                superSection.updateScore(),
-                comment
-            ]);
-        });
-
-        const finalScore = document.querySelector('.total-box__current-score')?.innerText || 0;
-
-
-        rows.push([
-            "FINAL TOTAL",
-            finalScore,
-            ""
-        ]);
-
         this.downloadCSV(rows, `${caseName}_${studentLastName}_${studentName}.csv`);
 
     }
@@ -421,39 +427,141 @@ class FormHandler {
         document.body.removeChild(link);
 
     }
-
-
 }
 
-window.onload = function () {
-    renderer = new FormHandler();
-    document.querySelector('.file-download').addEventListener('click', function () { renderer.exportCSV() })
-    fileInput = document.getElementById('fileInput');
+function populateStudentSelect(students) {
+    const select = document.querySelector('.student-box__student-name');
+    select.innerHTML = '';
 
-    fileInput.addEventListener('change', function (event) {
-        const file = event.target.files[0];
-        if (!file) return;
+    const defaultOption = document.createElement('option');
+    defaultOption.textContent = "Sélectionner un étudiant";
+    defaultOption.disabled = true;
+    defaultOption.selected = true;
+    select.appendChild(defaultOption);
 
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            try {
-                const json = JSON.parse(e.target.result);
-                renderer.clearForm();
-                renderer.renderForm(json);
-                renderer.setMaxScore();
-            } catch (err) {
-                console.log(err)
-                alert("Erreur JSON : " + err.message);
-            }
-        };
-        reader.readAsText(file);
+    students.forEach(s => {
+        if (!s.firstname || !s.name) return;
+
+        const option = document.createElement('option');
+        option.value = `${s.firstname} ${s.name}`;
+        option.textContent = `${s.firstname} ${s.name}`;
+        select.appendChild(option);
     });
+}
+
+
+function parseCSV(text) {
+    const lines = text.split('\n').filter(l => l.trim() !== '');
+
+    const students = [];
+
+    for (let i = START_ROW; i < lines.length; i++) {
+        const cols = lines[i].split(',');
+
+        students.push({
+            firstname: cols[FIRSTNAME_INDEX]?.trim(),
+            name: cols[NAME_INDEX]?.trim()
+        });
+    }
+
+    return students;
+}
+
+
+function parseXLS(buffer) {
+    const data = new Uint8Array(buffer);
+    const workbook = XLSX.read(data, { type: 'array' });
+
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+    return rows.slice(START_ROW).map(row => ({
+        firstname: row[FIRSTNAME_INDEX],
+        name: row[NAME_INDEX]
+    }));
+}
+
+
+// ===============================
+// INIT
+// ===============================
+
+window.onload = function () {
+
+    const fileInput = document.getElementById('students_list_select');
+    const button = document.getElementById('studentUploadBtn');
+    const fileNameDisplay = document.getElementById('studentFileName');
+
+    button.addEventListener('click', () => {
+        fileInput.click();
+    });
+
+    fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) {
+            fileNameDisplay.textContent = "Aucun fichier sélectionné";
+            return;
+        }
+
+        fileNameDisplay.textContent = file.name;
+    });
+
+    const renderer = new FormHandler();
+
+    document.querySelector('.file-download')
+        .addEventListener('click', () => renderer.exportCSV());
+
+    // JSON form loader
+    document.getElementById('fileInput')
+        .addEventListener('change', function (e) {
+
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+
+            reader.onload = function (ev) {
+                try {
+                    const json = JSON.parse(ev.target.result);
+                    renderer.clearForm();
+                    renderer.renderForm(json);
+                    renderer.setMaxScore();
+                } catch (err) {
+                    alert("Erreur JSON: " + err.message);
+                }
+            };
+
+            reader.readAsText(file);
+        });
+
+
+    // STUDENTS FILE
+    document.getElementById('students_list_select')
+        .addEventListener('change', function (e) {
+
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            const name = file.name.toLowerCase();
+
+            reader.onload = function (ev) {
+
+                let students = [];
+
+                if (name.endsWith('.csv')) {
+                    students = parseCSV(ev.target.result);
+                } else {
+                    students = parseXLS(ev.target.result);
+                }
+
+                populateStudentSelect(students);
+            };
+
+            if (name.endsWith('.csv')) {
+                reader.readAsText(file);
+            } else {
+                reader.readAsArrayBuffer(file);
+            }
+        });
 };
-
-
-
-
-
-
-
-

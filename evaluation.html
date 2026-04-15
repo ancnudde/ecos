@@ -6,8 +6,12 @@
   <title>Grille d'évaluation</title>
   <link rel="stylesheet" href="style_evaluation.css">
   <script src="evaluation.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 
 <body>
@@ -18,14 +22,22 @@
 
       <label class="file-upload">
         <input type="file" id="fileInput" accept=".JSON">
-        <span class="file-upload__button">Upload JSON</span>
+        <span class="file-upload__button">Importer la grille</span>
       </label>
     </div>
 
     <div class="student-box">
-      <input class="student-box__student-name" placeholder="Nom de l'étudiant"></input>
-      <input class="student-box__student-last-name" placeholder="Prénom de l'étudiant"></input>
-      <input class="student-box__student-last-name" placeholder="Evaluateur"></input>
+      <input type="file" id="students_list_select" hidden>
+
+      <button type="button" id="studentUploadBtn" class="file-btn">
+        Importer liste étudiants
+      </button>
+
+      <span id="studentFileName" class="file-name">
+        Aucun fichier sélectionné
+      </span>
+
+      <select class="student-box__student-name"></select>
     </div>
   </div>
   <div class="form-area">
