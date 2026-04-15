@@ -564,4 +564,41 @@ window.onload = function () {
                 reader.readAsArrayBuffer(file);
             }
         });
+
+    document.getElementById('resetAppBtn').addEventListener('click', () => {
+
+        if (!confirm("Réinitialiser les scores et commentaires ?")) return;
+
+        // 1. Uncheck all tickboxes
+        document.querySelectorAll('question-item input[type="checkbox"]').forEach(cb => {
+            cb.checked = false;
+        });
+
+        // 2. Reset question-level scores display
+        document.querySelectorAll('section-bloc').forEach(section => {
+            const scoreEl = section.querySelector('.section__section-title__section-total');
+            if (scoreEl) scoreEl.textContent = "0";
+        });
+
+        // 3. Reset super-section scores
+        document.querySelectorAll('.super-section__title-bloc__total').forEach(el => {
+            el.textContent = "";
+        });
+
+        // 4. Clear comments (✅ NEW)
+        document.querySelectorAll('.super-section__comment').forEach(textarea => {
+            textarea.value = "";
+        });
+
+        // 5. Reset global score
+        document.querySelector('.total-box__current-score').textContent = "0";
+
+        // 6. Recompute score state
+        if (window.renderer) {
+            renderer.container.dispatchEvent(
+                new CustomEvent('score-change', { bubbles: true })
+            );
+        }
+
+    });
 };
